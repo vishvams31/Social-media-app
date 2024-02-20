@@ -1,13 +1,16 @@
 import "./topbar.css"
 import React from 'react'
 import { Search, Person, Chat, Notifications } from "@mui/icons-material"
+import { Link } from "react-router-dom"
 
 export default function Topbar() {
     return (
         <div className="topbarContainer">
             <div className="topbarContainer">
                 <div className="topbarLeft">
-                    <span className="logo">Zigsocial</span>
+                    <Link to="/" style={{ textDecoration: "none" }}>
+                        <span className="logo">Zigsocial</span>
+                    </Link>
                 </div>
                 <div className="topbarCenter">
                     <div className="searchbar">
