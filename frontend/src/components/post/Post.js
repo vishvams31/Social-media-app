@@ -1,14 +1,35 @@
-import React, { useState } from 'react'
-import './post.css'
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { Users } from "../../dummyData"
+import React, { useEffect, useState, useContext } from 'react'
+// require('dotenv').config();
+import './post.css'
+import axios from 'axios';
+import { format } from 'timeago.js'
+import { Link } from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext';
 export default function Post({ post }) {
-    const [Like, setLike] = useState(post.like);
-    const [isLiked, setisLiked] = useState(false);
+    const [Like, setLike] = useState(post.likes.length);
+    const [isLiked, setIsLiked] = useState(false);
+    const [user, setUser] = useState({});
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+    const { user: currentUser } = useContext(AuthContext);
+    useEffect(() => {
+        setIsLiked(post.likes.includes(currentUser._id))
+    }, [currentUser._id, post.likes])
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const res = await axios.get(`/users?userId=${post.userId}`)
+            setUser(res.data)
+            // console.log(res.data);
+        };
+        fetchUser();
+    }, [post.userId])
     const likeHandler = () => {
+        try {
+            axios.put("/posts/" + post._id + "/like", { userId: currentUser._id })
+        } catch (err) { }
         setLike(isLiked ? Like - 1 : Like + 1)
-        setisLiked(!isLiked)
+        setIsLiked(!isLiked)
     }
 
     return (
@@ -16,9 +37,11 @@ export default function Post({ post }) {
             <div className='postWrapper'>
                 <div className='postTop'>
                     <div className='postTopLeft'>
-                        <img className='postProfileImg' src={Users.filter((u) => u.id === post.userId)[0].profilePicture} alt="" />
-                        <span className='postUsername'>{Users.filter((u) => u.id === post.userId)[0].username}</span>
-                        <span className='postDate'>{post.date}</span>
+                        <Link to={`profile/${user.username}`}>
+                            <img className='postProfileImg' src={user.profilePicture ? PF + user.profilePicture : PF + "/person/noProfilePicture.jpeg"} alt="" />
+                        </Link>
+                        <span className='postUsername'>{user.username}</span>
+                        <span className='postDate'>{format(post.createdAt)}</span>
                     </div>
                     <div className='postTopRight'>
                         <MoreVertIcon />
@@ -26,7 +49,7 @@ export default function Post({ post }) {
                 </div>
                 <div className='postCenter'>
                     <span className='postText'>{post?.desc}</span>
-                    <img className='postImg' src={PF + post.photo} alt="" />
+                    <img className='postImg' src={PF + post.img} alt="" />
                 </div>
                 <div className='postBottom'>
                     <div className='postBottomLeft'>
