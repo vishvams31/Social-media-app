@@ -1,36 +1,75 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import React, { useEffect, useState, useContext } from 'react'
-// require('dotenv').config();
-import './post.css'
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-import { format } from 'timeago.js'
-import { Link } from 'react-router-dom'
+import './post.css';
+import { format } from 'timeago.js';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+
 export default function Post({ post }) {
     const [Like, setLike] = useState(post.likes.length);
     const [isLiked, setIsLiked] = useState(false);
     const [user, setUser] = useState({});
+    const [showDropdown, setShowDropdown] = useState(false);
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
     const { user: currentUser } = useContext(AuthContext);
+
     useEffect(() => {
-        setIsLiked(post.likes.includes(currentUser._id))
-    }, [currentUser._id, post.likes])
+        setIsLiked(post.likes.includes(currentUser._id));
+    }, [currentUser._id, post.likes]);
 
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await axios.get(`/users?userId=${post.userId}`)
-            setUser(res.data)
-            // console.log(res.data);
+            try {
+                const res = await axios.get(`http://localhost:8800/api/users?userId=${post.userId}`);
+                setUser(res.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                // Handle error, show message to user, etc.
+            }
         };
         fetchUser();
-    }, [post.userId])
+    }, [post.userId]);
+
     const likeHandler = () => {
         try {
-            axios.put("/posts/" + post._id + "/like", { userId: currentUser._id })
-        } catch (err) { }
-        setLike(isLiked ? Like - 1 : Like + 1)
-        setIsLiked(!isLiked)
-    }
+            axios.put("http://localhost:8800/api/posts/" + post._id + "/like", { userId: currentUser._id });
+        } catch (err) {
+            console.error('Error liking post:', err);
+            // Handle error, show message to user, etc.
+        }
+        setLike(isLiked ? Like - 1 : Like + 1);
+        setIsLiked(!isLiked);
+    };
+
+    const handleDropdown = () => {
+        if (currentUser._id === post.userId) {
+            setShowDropdown(!showDropdown);
+        }// Toggle dropdown visibility
+    };
+
+    const handleUpdatePost = () => {
+        // Implement logic to handle updating post
+        setShowDropdown(false); // Close the dropdown menu after clicking the option
+    };
+
+    const handleDeletePost = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
+        if (confirmDelete) {
+            try {
+                console.log(post.userId)
+                await axios.delete(`http://localhost:8800/api/posts/${post._id}`, {
+                    data: { userId: post.userId }
+                });
+                window.location.reload();
+                // Optionally, you can perform additional actions after the post is deleted
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                // Handle error, show message to user, etc.
+            }
+        }
+
+    };
 
     return (
         <div className='post'>
@@ -44,7 +83,13 @@ export default function Post({ post }) {
                         <span className='postDate'>{format(post.createdAt)}</span>
                     </div>
                     <div className='postTopRight'>
-                        <MoreVertIcon />
+                        <MoreVertIcon onClick={handleDropdown} />
+                        {showDropdown && ( // Render dropdown when showDropdown is true
+                            <div className="dropdown-content">
+                                <button onClick={handleUpdatePost}>Update</button>
+                                <button onClick={handleDeletePost}>Delete</button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className='postCenter'>
@@ -60,9 +105,8 @@ export default function Post({ post }) {
                     <div className='postBottomRight'>
                         <span className='postCommentText'>{post.comment} comments</span>
                     </div>
-
                 </div>
             </div>
         </div>
-    )
+    );
 }

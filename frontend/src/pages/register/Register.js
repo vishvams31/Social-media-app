@@ -21,7 +21,7 @@ export default function Register() {
                     email: email.current.value,
                     password: password.current.value
                 }
-                await axios.post("/auth/register", user);
+                await axios.post("http://localhost:8800/api/auth/register", user);
                 toast.success("Successfully registered");
                 navigate("/login")
             } catch (err) {
@@ -45,7 +45,9 @@ export default function Register() {
                         <input placeholder="Password" required ref={password} className="loginInput" type="password" minLength="6" />
                         <input placeholder="Password Again" required ref={passwordAgain} className="loginInput" type="password" />
                         <button className="loginButton" type="submit">Sign Up</button>
-                        <button className="loginRegisterButton">
+                        <button className="loginRegisterButton" onClick={() => {
+                            navigate("/login")
+                        }}>
                             Log into Account
                         </button>
                     </form>

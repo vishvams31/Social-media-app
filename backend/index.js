@@ -11,6 +11,7 @@ const cors = require('cors')
 const multer = require('multer')
 const path = require('path')
 
+app.use(cors())
 
 dotenv.config();
 mongoose.connect(process.env.MONGO_URL).then(() => {

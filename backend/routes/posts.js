@@ -31,8 +31,13 @@ router.delete("/:id", async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (post.userId == req.body.userId) {
-            await post.deleteOne();
-            res.status(200).json("the post has been deleted")
+            if (!post) {
+                res.status(404).json("post not found")
+            }
+            else {
+                await post.deleteOne();
+                res.status(200).json("the post has been deleted")
+            }
         }
         else {
             exports.status(403).json("you can delete only your post")
@@ -85,11 +90,12 @@ router.get("/timeline/:userId", async (req, res) => {
 // get user's all post
 router.get("/profile/:username", async (req, res) => {
     try {
-        const user = await User.findOne({ username: req.params.username })
-        const posts = await Post.find({ userId: user._id })
-        res.status(200).json(posts)
+        const user = await User.findOne({ username: req.params.username });
+        const posts = await Post.find({ userId: user._id });
+        res.status(200).json(posts);
     } catch (err) {
         res.status(500).json(err);
     }
 });
+
 module.exports = router; 

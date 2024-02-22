@@ -12,6 +12,7 @@ import { useContext } from "react";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import Profile from "./pages/profile/Profile";
+// import EditPostPage from "./pages/editPostPage/EditPostPage";
 import { AuthContext } from "./context/AuthContext";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route exact path='/login' element={user ? <Navigate replace to="/" /> : <Login />}></Route>
           <Route exact path='/register' element={user ? <Navigate replace to="/" /> : <Register />}></Route>
           <Route exact path='/profile/:username' element={<Profile />}></Route>
+          {/* <Route path="/edit-post/:postId" component={EditPostPage} /> */}
         </Routes>
       </BrowserRouter>
     </>

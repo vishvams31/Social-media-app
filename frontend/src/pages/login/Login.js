@@ -2,16 +2,20 @@ import "./login.css";
 import { useRef, useContext } from 'react'
 import { loginCall } from "../../apiCalls";
 import { AuthContext } from "../../context/AuthContext"
+import {
+    useNavigate
+} from "react-router-dom";
 // import CircularProgress from '@mui/material/CircularProgress';
 export default function Login() {
     const email = useRef();
     const password = useRef();
-    const { user, isFetching, error, dispatch } = useContext(AuthContext)
+    const { isFetching, dispatch } = useContext(AuthContext)
     const handleClick = (e) => {
         e.preventDefault();
         loginCall({ email: email.current.value, password: password.current.value }, dispatch);
     };
-    console.log(user)
+    const navigate = useNavigate();
+    // console.log(user)
     return (
         <div className="login">
             <div className="loginWrapper">
@@ -27,7 +31,7 @@ export default function Login() {
                         <input placeholder="Password" required minLength="6" type="password" className="loginInput" ref={password} />
                         <button className="loginButton" type="submit" disabled={isFetching}>Log in</button>
                         <span span className="loginForgot">Forgot Password?</span>
-                        <button className="loginRegisterButton">
+                        <button className="loginRegisterButton" onClick={() => navigate('/register')} >
                             Create a New Account
                         </button>
                     </form>
