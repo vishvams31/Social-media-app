@@ -86,6 +86,7 @@
 
 .shareCancelImg{
   position: absolute;
+  color: white;
   top: 0;
   right: 20px;
   cursor: pointer;

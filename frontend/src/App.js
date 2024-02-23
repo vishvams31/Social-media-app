@@ -19,7 +19,6 @@ function App() {
   const { user } = useContext(AuthContext)
   return (
     <>
-      <Toaster />
       <BrowserRouter>
         <Routes>
           <Route exact path='/' element={user ? <Home /> : <Register />}></Route>
@@ -29,6 +28,7 @@ function App() {
           {/* <Route path="/edit-post/:postId" component={EditPostPage} /> */}
         </Routes>
       </BrowserRouter>
+      <Toaster />
     </>
   );
 }

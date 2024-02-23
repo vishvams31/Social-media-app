@@ -7,6 +7,7 @@ import "./share.css";
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 export default function Share() {
     const { user } = useContext(AuthContext);

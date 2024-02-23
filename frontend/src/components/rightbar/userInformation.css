@@ -1,0 +1,38 @@
+.saveButton{
+  border: none;
+  background-color: rgb(0, 60, 255);;
+  color: white;
+  border-radius: 5px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.saveButton:focus{
+  outline: none;
+}
+.logoutButton{
+  border: none;
+  background-color: rgb(255, 0, 0);;
+  color: white;
+  border-radius: 5px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.logoutButton:focus{
+  outline: none;
+}
+  .userInformationInput{
+    outline: none;
+  }
+  .profileButtons{
+    display: flex;
+  }

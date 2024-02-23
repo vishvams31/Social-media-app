@@ -5,6 +5,7 @@ import './post.css';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import toast from 'react-hot-toast';
 
 export default function Post({ post }) {
     const [Like, setLike] = useState(post.likes.length);
@@ -62,10 +63,12 @@ export default function Post({ post }) {
                     data: { userId: post.userId }
                 });
                 window.location.reload();
-                // Optionally, you can perform additional actions after the post is deleted
-            } catch (error) {
+                setTimeout(() => {
+                    toast.success("successfully deleted")
+                }, 5000)
+            }
+            catch (error) {
                 console.error('Error deleting post:', error);
-                // Handle error, show message to user, etc.
             }
         }
 
@@ -101,9 +104,6 @@ export default function Post({ post }) {
                         <img className='likeIcon' src={`${PF}like.png`} onClick={likeHandler}></img>
                         <img className='likeIcon' src={`${PF}heart.png`} onClick={likeHandler} alt=""></img>
                         <span className='postLikeCounter'>{Like} people like it</span>
-                    </div>
-                    <div className='postBottomRight'>
-                        <span className='postCommentText'>{post.comment} comments</span>
                     </div>
                 </div>
             </div>

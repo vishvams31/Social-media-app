@@ -9,8 +9,8 @@ import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 import WorkIcon from '@mui/icons-material/Work';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import SchoolIcon from '@mui/icons-material/School';
-import { Users } from "../../dummyData"
 import CloseFriend from '../closeFriend/CloseFriend';
+import { Users } from "../../dummyData"
 
 export default function Sidebar() {
     return (

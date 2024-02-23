@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import UserInformation from "./userInformation";
 
 export default function Rightbar({ user }) {
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
@@ -15,19 +16,28 @@ export default function Rightbar({ user }) {
     const [followed, setFollowed] = useState(
         currentUser.followings.includes(user?.id)
     );
+
+    const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
         const getFriends = async () => {
             try {
-                const friendList = await axios.get("http://localhost:8800/api/users/friends/" + user._id);
-                setFriends(friendList.data);
+                setIsLoading(true); // Start loading
+                if (user && user._id) {
+                    const URL = `http://localhost:8800/api/users/friends/${user._id}`;
+                    const friendList = await axios.get(URL);
+                    setFriends(friendList.data);
+                    setIsLoading(false); // Stop loading
+                }
+
             } catch (err) {
-                console.log(err);
+                console.log("smit" + err);
             }
         };
         getFriends();
     }, [user]);
     const followHandler = async () => {
         try {
+            console.log(!followed)
             if (followed) {
                 await axios.put(`http://localhost:8800/api/users/${user._id}/unfollow`, {
                     userId: currentUser._id,
@@ -39,7 +49,7 @@ export default function Rightbar({ user }) {
                 });
                 dispatch({ type: "FOLLOW", payload: user._id });
             }
-            setFollowed(!followed);
+            setFollowed(followed);
         } catch (err) {
         }
     };
@@ -50,7 +60,7 @@ export default function Rightbar({ user }) {
                 <div className="birthdayContainer">
                     <img className="birthdayImg" src="assets/gift.png" alt="" />
                     <span className="birthdayText">
-                        <b>Pola Foster</b> and <b>3 other friends</b> have a birhday today.
+                        <b>Jeel Maheshwari</b> and <b>3 other friends</b> have a birhday today.
                     </span>
                 </div>
                 <img className="rightbarAd" src="assets/ad.png" alt="" />
@@ -76,20 +86,7 @@ export default function Rightbar({ user }) {
                 )}
 
                 <h4 className="rightbarTitle">User information</h4>
-                <div className="rightbarInfo">
-                    <div className="rightbarInfoItem">
-                        <span className="rightbarInfoKey">City:</span>
-                        <span className="rightbarInfoValue">{user.city}</span>
-                    </div>
-                    <div className="rightbarInfoItem">
-                        <span className="rightbarInfoKey">From:</span>
-                        <span className="rightbarInfoValue">{user.from}</span>
-                    </div>
-                    <div className="rightbarInfoItem">
-                        <span className="rightbarInfoKey">Relationship:</span>
-                        <span className="rightbarInfoValue">{user.relationship === 1 ? "Single" : user.relationship === 2 ? "Married" : ""}</span>
-                    </div>
-                </div>
+                <UserInformation user={user} />
                 <h4 className="rightbarTitle">User friends</h4>
                 <div className="rightbarFollowings">
                     {friends.map((friend) => (
@@ -109,6 +106,7 @@ export default function Rightbar({ user }) {
         );
     };
     return (
+        // isLoading ? <div>Loading....</div> :
         <div className="rightbar">
             <div className="rightbarWrapper">
                 {user ? <ProfileRightbar /> : <HomeRightbar />}

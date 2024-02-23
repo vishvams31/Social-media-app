@@ -20,7 +20,7 @@ router.put("/:id", async (req, res) => {
             res.status(200).json("the post has been updated")
         }
         else {
-            exports.status(403).json("you can update only your post")
+            res.status(403).json("you can update only your post")
         }
     } catch (err) {
         res.status(500).json(err)

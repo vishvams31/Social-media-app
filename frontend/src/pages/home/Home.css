@@ -1,4 +1,13 @@
-.homeContainer{
+.homeContainer {
     display: flex;
-    width: 100%;
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: space-between; /* Distribute items evenly */
+    padding: 20px; /* Add padding around the container */
+}
+
+@media screen and (max-width: 768px) {
+    .homeContainer {
+        flex-direction: column; /* Change direction to column for smaller screens */
+        align-items: center; /* Center items horizontally */
+    }
 }

@@ -1,7 +1,8 @@
 const User = require("../models/User");
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
-
+const multer = require('multer')
+const path = require('path')
 //update the user  user
 router.put("/:id", async (req, res) => {
     if (req.body.userId === req.params.id || req.body.isAdmin) {
