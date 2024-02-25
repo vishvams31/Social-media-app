@@ -11,6 +11,19 @@
     top: 0;
     z-index: 999;
   }
+  .searchButton{
+    margin-left: 100px;
+  border: none;
+  background-color: #f21856;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  }
   
   .topbarLeft {
     flex: 3;
