@@ -4,8 +4,8 @@ import axios from 'axios';
 import './post.css';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 export default function Post({ post }) {
     const [Like, setLike] = useState(post.likes.length);
@@ -13,7 +13,7 @@ export default function Post({ post }) {
     const [user, setUser] = useState({});
     const [showDropdown, setShowDropdown] = useState(false);
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-    const { user: currentUser } = useContext(AuthContext);
+    const currentUser = useSelector(state => state.auth.user)
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(post.desc);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -94,7 +94,6 @@ export default function Post({ post }) {
         const confirmDelete = window.confirm("Are you sure you want to delete this post?");
         if (confirmDelete) {
             try {
-                console.log(post.userId)
                 await axios.delete(`http://localhost:8800/api/posts/${post._id}`, {
                     data: { userId: post.userId }
                 });

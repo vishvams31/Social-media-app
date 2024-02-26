@@ -5,12 +5,12 @@ import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import { Cancel } from '@mui/icons-material';
 import "./share.css";
 import { useContext, useRef, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
 
 export default function Share() {
-    const { user } = useContext(AuthContext);
+    const user = useSelector(state => state.auth.user);
     const PF = process.env.REACT_APP_PUBLIC_FOLDER;
     const desc = useRef();
     const [file, setFile] = useState(null);
@@ -35,6 +35,9 @@ export default function Share() {
         try {
             await axios.post("http://localhost:8800/api/posts", newPost);
             window.location.reload();
+            setTimeout(() => {
+                toast.success("Post uploaded")
+            }, 2000)
         } catch (err) { }
     };
 

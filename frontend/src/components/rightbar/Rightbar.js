@@ -4,18 +4,24 @@ import Online from "../online/Online";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+// import { AuthContext } from "../../context/AuthContext";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import UserInformation from "./userInformation";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Rightbar({ user }) {
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     const [friends, setFriends] = useState([])
-    const { user: currentUser, dispatch } = useContext(AuthContext)
-    const [followed, setFollowed] = useState(
-        currentUser.followings.includes(user?._id)
-    );
+    // const { user: currentUser, dispatch } = useContext(AuthContext)
+    const currentUser = useSelector(state => state.auth.user)
+    const dispatch = useDispatch();
+
+    const [followed, setFollowed] = useState(false);
+    useEffect(() => {
+        setFollowed(currentUser.followings.includes(user?._id));
+    }, [currentUser, user?._id]);
+    // console.log(followed);
     const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
         const getFriends = async () => {
@@ -85,8 +91,8 @@ export default function Rightbar({ user }) {
                 )}
 
                 <h4 className="rightbarTitle">User information</h4>
-                <UserInformation user={user} />
-                <h4 className="rightbarTitle">User friends</h4>
+                <UserInformation user={currentUser} />
+                <h4 className="rightbarFriendTitle">User friends</h4>
                 <div className="rightbarFollowings">
                     {friends.map((friend) => (
                         <Link to={"/profile/" + friend.username} style={{ textDecoration: "none" }}>
@@ -112,4 +118,5 @@ export default function Rightbar({ user }) {
             </div>
         </div>
     );
+
 }

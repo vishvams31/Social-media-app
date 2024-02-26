@@ -12,8 +12,9 @@
     z-index: 999;
   }
   .searchButton{
+    /* flex: 2; */
     margin-left: 150px;
-  border: none;
+  border: none; 
   background-color: #f21856;
   color: white;
   border-radius: 5px;

@@ -1,4 +1,4 @@
-import Home from "./pages/home/Home";
+import Home from "./views/home/Home";
 import { Toaster } from 'react-hot-toast';
 
 import {
@@ -8,15 +8,25 @@ import {
   Navigate
 
 } from "react-router-dom"
-import { useContext } from "react";
-import Login from "./pages/login/Login";
-import Register from "./pages/register/Register";
-import Profile from "./pages/profile/Profile";
+import { useContext, useEffect } from "react";
+import Login from "./views/login/Login";
+import Register from "./views/register/Register";
+import Profile from "./views/profile/Profile";
 // import EditPostPage from "./pages/editPostPage/EditPostPage";
-import { AuthContext } from "./context/AuthContext";
+import { loginSuccess } from '../src/actions/AuthAction'
+import { useDispatch, useSelector } from "react-redux";
 
 function App() {
-  const { user } = useContext(AuthContext)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      dispatch(loginSuccess(user));
+    }
+  }, [dispatch]);
+
+  const user = useSelector(state => state.auth.user)
   return (
     <>
       <BrowserRouter>

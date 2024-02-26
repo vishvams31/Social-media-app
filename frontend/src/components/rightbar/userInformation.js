@@ -1,10 +1,13 @@
 import axios from 'axios';
 import React, { useContext, useState } from 'react';
-import { AuthContext } from '../../context/AuthContext';
 import './userInformation.css'
 import { useNavigate } from 'react-router-dom';
-const UserInformation = ({ user }) => {
-  const { user: currentUser } = useContext(AuthContext)
+import { useSelector } from 'react-redux';
+import { Field } from 'redux-form';
+const UserInformation = ({ user, handleSubmit, ...props }) => {
+  const currentUser = useSelector(state => state.auth.user);
+
+
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState({
     city: user.city,
@@ -38,12 +41,22 @@ const UserInformation = ({ user }) => {
     userId: user._id,
     username: formValues.username
   };
-  const updateData = async () => await axios.put("http://localhost:8800/api/users/" + user._id, data)
+  const updateData = async (values) => {
+    const data = {
+      city: values.city,
+      from: values.from,
+      relationship: values.relationship,
+      userId: user._id,
+      username: values.username,
+    };
+    await axios.put(`http://localhost:8800/api/users/${user._id}`, data);
+  };
+
 
   const toggleEditMode = (e) => {
     e.preventDefault()
     if (isEditing && user._id == currentUser._id) {
-      updateData();
+      props.handleSubmit(updateData)();
     }
     setIsEditing(!isEditing);
   };
