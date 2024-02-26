@@ -4,7 +4,8 @@ import './userInformation.css'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Field } from 'redux-form';
-const UserInformation = ({ user, handleSubmit, ...props }) => {
+import {useForm} from 'react-hook-form'
+const UserInformation = ({user}) => {
   const currentUser = useSelector(state => state.auth.user);
 
 
@@ -33,14 +34,6 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
       window.location.reload()
     }
   };
-
-  const data = {
-    city: formValues.city,
-    from: formValues.from,
-    relationship: formValues.relationship,
-    userId: user._id,
-    username: formValues.username
-  };
   const updateData = async (values) => {
     const data = {
       city: values.city,
@@ -53,10 +46,10 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
   };
 
 
-  const toggleEditMode = (e) => {
+  const toggleEditMode = async(data,e) => {
     e.preventDefault()
     if (isEditing && user._id == currentUser._id) {
-      props.handleSubmit(updateData)();
+      await updateData(data);
     }
     setIsEditing(!isEditing);
   };
@@ -67,14 +60,15 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
   // user.followers.length
   const navigate = useNavigate()
 
+  const {register,handleSubmit} = useForm();
   return (
     <div className="rightbarInfo">
       <div className="rightbarInfoItem">
         <div className="rightbarInfoItem">
           <span className="rightbarInfoKey">Username:</span>
           {isEditing ? <input
+            {...register("username")}
             type="text"
-            name="username"
             value={formValues.username}
             onChange={handleInputChange}
             disabled={!isEditing}
@@ -84,8 +78,8 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
         </div>
         <span className="rightbarInfoKey">City:</span>
         {isEditing ? <input
+          {...register("city")}
           type="text"
-          name="city"
           value={formValues.city}
           onChange={handleInputChange}
           disabled={!isEditing}
@@ -96,8 +90,8 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
       <div className="rightbarInfoItem">
         <span className="rightbarInfoKey">From:</span>
         {isEditing ? <input
+          {...register("from")}
           type="text"
-          name="from"
           value={formValues.from}
           onChange={handleInputChange}
           disabled={!isEditing}
@@ -108,7 +102,7 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
       <div className="rightbarInfoItem">
         <span className="rightbarInfoKey">Relationship:</span>
         {isEditing ? <select
-          name="relationship"
+          {...register("relationship")}
           value={formValues.relationship}
           onChange={handleInputChange}
           disabled={!isEditing}
@@ -127,7 +121,7 @@ const UserInformation = ({ user, handleSubmit, ...props }) => {
 
       {user._id === currentUser._id && (
         <div className='profileButtons'>
-          <button className='saveButton' onClick={toggleEditMode}>
+          <button className='saveButton' onClick={handleSubmit(toggleEditMode)}>
             {isEditing ? 'Save' : 'Edit'}
           </button>
           <button className='logoutButton' onClick={handleLogout}

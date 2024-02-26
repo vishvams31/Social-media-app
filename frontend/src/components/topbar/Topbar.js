@@ -10,9 +10,24 @@ export default function Topbar() {
     const [friends, setFriends] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate()
-    const searchUser = (username) => {
-        return friends.find(user => user.username.toLowerCase() === username.toLowerCase());
-    };
+    // const searchUser = (username) => {
+    //     return friends.find(user => user.username.toLowerCase() === username.toLowerCase());
+    // };
+    // Search user by calling the API and filtering the results
+
+    const searchUser = async (username) => {
+
+
+        try {
+            console.log(username)
+            const URL = `http://localhost:8800/api/users/exists/${username}`;
+            const user = await axios.get(URL);
+            return user.data;
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
 
     useEffect(() => {
         const getFriends = async () => {
@@ -29,10 +44,10 @@ export default function Topbar() {
         };
         getFriends();
     }, [user]);
-    const handleSearch = () => {
+    const handleSearch = async () => {
 
         // Assuming you have a function to search for a user by username
-        const user = searchUser(searchTerm);
+        const user = await searchUser(searchTerm);
         if (user) {
             navigate(`/profile/${user.username}`);
         } else {

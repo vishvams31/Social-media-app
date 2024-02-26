@@ -13,7 +13,8 @@
   }
   .searchButton{
     /* flex: 2; */
-    margin-left: 150px;
+    /* margin-left: 150p20pxx; */
+  margin-right: 9px;
   border: none; 
   background-color: #f21856;
   color: white;
@@ -49,6 +50,8 @@
     border-radius: 30px;
     display: flex;
     align-items: center;
+    
+    justify-content: space-between;
   }
   
   .searchIcon {

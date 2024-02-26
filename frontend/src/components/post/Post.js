@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 
-export default function Post({ post }) {
+export default function Post({ post ,handleDeletePost}) {
     const [Like, setLike] = useState(post.likes.length);
     const [isLiked, setIsLiked] = useState(false);
     const [user, setUser] = useState({});
@@ -90,24 +90,7 @@ export default function Post({ post }) {
 
 
 
-    const handleDeletePost = async () => {
-        const confirmDelete = window.confirm("Are you sure you want to delete this post?");
-        if (confirmDelete) {
-            try {
-                await axios.delete(`http://localhost:8800/api/posts/${post._id}`, {
-                    data: { userId: post.userId }
-                });
-                window.location.reload();
-                setTimeout(() => {
-                    toast.success("successfully deleted")
-                }, 5000)
-            }
-            catch (error) {
-                console.error('Error deleting post:', error);
-            }
-        }
-
-    };
+   
 
     return (
 

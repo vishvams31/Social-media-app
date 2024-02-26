@@ -91,7 +91,7 @@ export default function Rightbar({ user }) {
                 )}
 
                 <h4 className="rightbarTitle">User information</h4>
-                <UserInformation user={currentUser} />
+                <UserInformation user={user} />
                 <h4 className="rightbarFriendTitle">User friends</h4>
                 <div className="rightbarFollowings">
                     {friends.map((friend) => (

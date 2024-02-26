@@ -118,5 +118,14 @@ router.put("/:id/unfollow", async (req, res) => {
         res.status(403).json("you cant unfollow yourself");
     }
 });
+//find a user
+router.get('/exists/:username', async (req, res) => {
 
+    try {
+        const user = await User.findOne({ username: req.params.username });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while checking the user.' });
+    }
+});
 module.exports = router;
