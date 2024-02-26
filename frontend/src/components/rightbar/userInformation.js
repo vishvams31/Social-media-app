@@ -10,6 +10,7 @@ const UserInformation = ({ user }) => {
     city: user.city,
     from: user.from,
     relationship: user.relationship,
+    username: user.username,
   });
 
   const handleInputChange = (event) => {
@@ -34,7 +35,8 @@ const UserInformation = ({ user }) => {
     city: formValues.city,
     from: formValues.from,
     relationship: formValues.relationship,
-    userId: user._id
+    userId: user._id,
+    username: formValues.username
   };
   const updateData = async () => await axios.put("http://localhost:8800/api/users/" + user._id, data)
 
@@ -55,6 +57,18 @@ const UserInformation = ({ user }) => {
   return (
     <div className="rightbarInfo">
       <div className="rightbarInfoItem">
+        <div className="rightbarInfoItem">
+          <span className="rightbarInfoKey">Username:</span>
+          {isEditing ? <input
+            type="text"
+            name="username"
+            value={formValues.username}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            className='userInformationInput'
+          /> : <span className='userInformationInput'>{formValues.username}</span>
+          }
+        </div>
         <span className="rightbarInfoKey">City:</span>
         {isEditing ? <input
           type="text"

@@ -19,7 +19,7 @@ export default function Post({ post }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
 
-    
+
     useEffect(() => {
         setIsLiked(post.likes.includes(currentUser._id));
     }, [currentUser._id, post.likes]);
@@ -57,18 +57,36 @@ export default function Post({ post }) {
         }// Toggle dropdown visibility
     };
 
-    const handleUpdatePost = () => {
+    const handleUpdatePost = async () => {
+        try {
+            const updatedPost = {
+                desc: editedContent,
+                userId: currentUser._id // Include the userId for authentication
+            };
+
+            const response = await axios.put(`http://localhost:8800/api/posts/${post._id}`, updatedPost);
+
+            if (response.status === 200) {
+                // Post updated successfully
+                console.log("Post updated:", response.data);
+                window.location.reload()
+                toast.success("your post updated successfully")
+                // If you want to update the UI with the updated post, you can do so here
+                // For example, you could update the post state with the updated post
+            } else {
+                console.error("Failed to update post:", response.data);
+                // Handle error - show message to user, etc.
+            }
+        } catch (error) {
+            console.error("Error updating post:", error);
+            // Handle error - show message to user, etc.
+        }
         // Implement logic to handle updating post
         setShowDropdown(false); // Close the dropdown menu after clicking the option
         setIsEditing(false);
     };
 
-    const handleImageChange = (e) => {
-        if (e.target.files[0]) {
-            setSelectedImage(e.target.files[0]);
-            setImagePreview(URL.createObjectURL(e.target.files[0]));
-        }
-    };  
+
 
 
 
@@ -95,49 +113,50 @@ export default function Post({ post }) {
     return (
 
         <div className='post'>
-        <div className='postWrapper'>
-            <div className='postTop'>
-                <div className='postTopLeft'>
-                    <Link to={`profile/${user.username}`}>
-                        <img className='postProfileImg' src={user.profilePicture ? PF + user.profilePicture : PF + "/person/noProfilePicture.jpeg"} alt="" />
-                    </Link>
-                    <span className='postUsername'>{user.username}</span>
-                    <span className='postDate'>{format(post.createdAt)}</span>
+            <div className='postWrapper'>
+                <div className='postTop'>
+                    <div className='postTopLeft'>
+                        <Link to={`profile/${user.username}`}>
+                            <img className='postProfileImg' src={user.profilePicture ? PF + user.profilePicture : PF + "/person/noProfilePicture.jpeg"} alt="" />
+                        </Link>
+                        <span className='postUsername'>{user.username}</span>
+                        <span className='postDate'>{format(post.createdAt)}</span>
+                    </div>
+                    <div className='postTopRight'>
+                        <MoreVertIcon onClick={handleDropdown} />
+                        {showDropdown && (
+                            <div className="dropdown-content">
+                                <button onClick={handleEditPost}>Edit</button>
+                                <button onClick={handleDeletePost}>Delete</button>
+                            </div>
+                        )}
+                    </div>
                 </div>
-                <div className='postTopRight'>
-                    <MoreVertIcon onClick={handleDropdown} />
-                    {showDropdown && (
-                        <div className="dropdown-content">
-                            <button onClick={handleEditPost}>Edit</button>
-                            <button onClick={handleUpdatePost}>Update</button>
-                            <button onClick={handleDeletePost}>Delete</button>
-                        </div>
+                <div className='postCenter'>
+                    {isEditing ? (
+                        <>
+                            <div>Image Description: </div>
+                            <span>
+                                <textarea className='postText' value={editedContent} onChange={(e) => setEditedContent(e.target.value)}></textarea>
+                                <span><button className='updateButton' onClick={handleUpdatePost}>Update</button></span>
+                            </span>
+                        </>
+                    ) : (
+                        <>
+                            <span className='postText'>{post.desc}</span>
+                            <img className='postImg' src={PF + post.img} alt="" />
+                        </>
                     )}
                 </div>
-            </div>
-            <div className='postCenter'>
-                {isEditing ? (
-                    <>
-                        <textarea className='postText' value={editedContent} onChange={(e) => setEditedContent(e.target.value)}></textarea>
-                        <input type="file" onChange={handleImageChange} />
-                        {imagePreview && <img src={imagePreview} className='postImg' alt="Preview" />}
-                    </>
-                ) : (
-                    <>
-                        <span className='postText'>{post.desc}</span>
-                        <img className='postImg' src={PF + post.img} alt="" />
-                    </>
-                )}
-            </div>
-            <div className='postBottom'>
-                <div className='postBottomLeft'>
-                    <img className='likeIcon' src={`${PF}like.png`} onClick={likeHandler}></img>
-                    <img className='likeIcon' src={`${PF}heart.png`} onClick={likeHandler} alt=""></img>
-                    <span className='postLikeCounter'>{Like} people like it</span>
+                <div className='postBottom'>
+                    <div className='postBottomLeft'>
+                        <img className='likeIcon' src={`${PF}like.png`} onClick={likeHandler}></img>
+                        <img className='likeIcon' src={`${PF}heart.png`} onClick={likeHandler} alt=""></img>
+                        <span className='postLikeCounter'>{Like} people like it</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
         // <div className='post'>
         //     <div className='postWrapper'>
         //         <div className='postTop'>
