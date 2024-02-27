@@ -14,7 +14,6 @@ export const handleFileChange = async (event, user) => {
     const fileName = Date.now() + file.name; // Generate a unique filename
     data.append("name", fileName);
     data.append("file", file);
-    const userId = user._id;
     try {
         // Upload the new profile picture
         const uploadResponse = await axios.post(BASE_URL + "upload", data);
@@ -157,6 +156,7 @@ export const updateData = async (values, user) => {
         username: values.username,
     };
     await axios.put(BASE_URL + `users/${user._id}`, data);
+    toast.success("Successfully Updated")
 };
 
 export const submitHandler = async (dat, event, user, file) => {

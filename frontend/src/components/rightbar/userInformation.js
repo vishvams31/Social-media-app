@@ -33,7 +33,7 @@ const UserInformation = ({ user }) => {
   };
   const toggleEditMode = async (data, e) => {
     e.preventDefault()
-    if (isEditing && user._id == currentUser._id) {
+    if (isEditing && user._id === currentUser._id) {
       await updateData(data, user);
     }
     setIsEditing(!isEditing);
@@ -104,7 +104,7 @@ const UserInformation = ({ user }) => {
           <option value="">Select</option>
           <option value="1">Single</option>
           <option value="2">Married</option>
-        </select> : <span className='userInformationInput'>{formValues.relationship == "1" ? "Single" : "Married"}</span>}
+        </select> : <span className='userInformationInput'>{formValues.relationship === "1" ? "Single" : "Married"}</span>}
       </div>
       <div className="rightbarInfoItem">
         <div className="rightbarInfoKey">Followers:{followercount}</div>

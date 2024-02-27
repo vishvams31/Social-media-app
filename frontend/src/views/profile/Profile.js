@@ -3,10 +3,9 @@ import Topbar from "../../components/topbar/Topbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Feed from "../../components/feed/Feed";
 import Rightbar from "../../components/rightbar/Rightbar";
-import { useRef, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
-import { fetchUserProfile, handleFileChange } from '../../services/Service'
-import { useSelector } from "react-redux";
+import { fetchUserProfile } from '../../services/Service'
 
 
 
@@ -15,7 +14,6 @@ export default function Profile() {
     // const [isLoading, setIsLoading] = useState(false)
     const [user, setUser] = useState({});
     const username = useParams().username;
-    const currentUser = useSelector(state => state.auth.user)
     // const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {

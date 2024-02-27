@@ -8,7 +8,7 @@ import {
   Navigate
 
 } from "react-router-dom"
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import Login from "./views/login/Login";
 import Register from "./views/register/Register";
 import Profile from "./views/profile/Profile";

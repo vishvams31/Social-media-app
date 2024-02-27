@@ -24,7 +24,6 @@ export default function Rightbar({ user }) {
     // console.log(followed);
     // const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
-
         getFriends(user, setFriends);
     }, [user]);
 
@@ -63,9 +62,9 @@ export default function Rightbar({ user }) {
                 <h4 className="rightbarTitle">User information</h4>
                 <UserInformation user={user} />
                 <h4 className="rightbarFriendTitle">User friends</h4>
-                <div className="rightbarFollowings">
+                <div className="rightbarFollowings" key={friends._id}>
                     {friends.map((friend) => (
-                        <Link to={"/profile/" + friend.username} style={{ textDecoration: "none" }}>
+                        <Link to={"/profile/" + friend.username} style={{ textDecoration: "none" }} key={friend._id}>
                             <div className="rightbarFollowing">
                                 <img
                                     src={friend.profilePicture ? PF + friend.profilePicture : PF + "person/noProfilePicture.jpeg"}

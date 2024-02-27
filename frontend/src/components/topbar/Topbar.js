@@ -1,28 +1,22 @@
 import "./topbar.css"
-import { useState, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { Search, Person, Chat, Notifications } from "@mui/icons-material"
 import { Link, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux";
 import { searchUser } from '../../services/Service'
-import { getFriends } from '../../services/Service'
 
 export default function Topbar() {
     const user = useSelector(state => state.auth.user);
-    const [friends, setFriends] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate()
-
-    useEffect(() => {
-        getFriends(user, setFriends);
-    }, [user]);
-    const handleSearch = async () => {
+    const handleSearch = useCallback(async () => {
         const user = await searchUser(searchTerm);
         if (user) {
             navigate(`/profile/${user.username}`);
         } else {
             alert('User not found');
         }
-    };
+    }, [searchTerm, navigate]);
     // console.log(user)
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     return (
@@ -35,7 +29,7 @@ export default function Topbar() {
                 </div>
                 <div className="topbarCenter">
                     <div className="searchbar">
-                        <Search />
+                        <Search className="searchIconMUI" />
                         <input type="text" placeholder="Search for friend, post or video" className="searchInput" value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)} />
                         <button onClick={handleSearch} className="searchButton">Search</button>

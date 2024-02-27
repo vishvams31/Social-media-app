@@ -52,7 +52,7 @@ export default function Post({ post, handleDeletePost }) {
                         <span className='postDate'>{format(post.createdAt)}</span>
                     </div>
                     <div className='postTopRight'>
-                        <MoreVertIcon onClick={handleDropdown} />
+                        {user._id === currentUser._id ? <MoreVertIcon onClick={handleDropdown} /> : ""}
                         {showDropdown && (
                             <div className="dropdown-content">
                                 <button onClick={handleEditPost}>Edit</button>
@@ -79,8 +79,8 @@ export default function Post({ post, handleDeletePost }) {
                 </div>
                 <div className='postBottom'>
                     <div className='postBottomLeft'>
-                        <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)}></img>
-                        <img className='likeIcon' src={`${PF}heart.png`} oonClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=""></img>
+                        <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=''></img>
+                        <img className='likeIcon' src={`${PF}heart.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=""></img>
                         <span className='postLikeCounter'>{Like} people like it</span>
                     </div>
                 </div>
