@@ -1,52 +1,21 @@
 import "./topbar.css"
-import { useContext, useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Person, Chat, Notifications } from "@mui/icons-material"
 import { Link, useNavigate } from "react-router-dom"
-import axios from "axios";
 import { useSelector } from "react-redux";
+import { searchUser } from '../../services/Service'
+import { getFriends } from '../../services/Service'
 
 export default function Topbar() {
     const user = useSelector(state => state.auth.user);
     const [friends, setFriends] = useState([])
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate()
-    // const searchUser = (username) => {
-    //     return friends.find(user => user.username.toLowerCase() === username.toLowerCase());
-    // };
-    // Search user by calling the API and filtering the results
-
-    const searchUser = async (username) => {
-
-
-        try {
-            console.log(username)
-            const URL = `http://localhost:8800/api/users/exists/${username}`;
-            const user = await axios.get(URL);
-            return user.data;
-        }
-        catch (err) {
-            console.log(err)
-        }
-    }
 
     useEffect(() => {
-        const getFriends = async () => {
-            try {
-                if (user && user._id) {
-                    const URL = `http://localhost:8800/api/users/friends/${user._id}`;
-                    const friendList = await axios.get(URL);
-                    setFriends(friendList.data);
-                }
-
-            } catch (err) {
-                console.log(err)
-            }
-        };
-        getFriends();
+        getFriends(user, setFriends);
     }, [user]);
     const handleSearch = async () => {
-
-        // Assuming you have a function to search for a user by username
         const user = await searchUser(searchTerm);
         if (user) {
             navigate(`/profile/${user.username}`);
@@ -54,7 +23,7 @@ export default function Topbar() {
             alert('User not found');
         }
     };
-    console.log(user)
+    // console.log(user)
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
     return (
         <div className="topbarContainer">
@@ -93,7 +62,7 @@ export default function Topbar() {
                         </div>
                     </div>
                     <Link to={`/profile/${user.username}`}>
-                        <img src={user.profilePicture ? PF + user.profilePicture : PF + "person/noProfilePicture"} alt="" className="topbarImg" />
+                        <img src={user.profilePicture ? PF + user.profilePicture : PF + "person/noProfilePicture.jpeg"} alt="" className="topbarImg" />
                     </Link>
                 </div>
             </div>

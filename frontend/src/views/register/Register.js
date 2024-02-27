@@ -1,8 +1,7 @@
 import "./register.css";
 import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import toast from 'react-hot-toast';
+import { handleClick } from '../../services/Service'
 
 export default function Register() {
     const email = useRef();
@@ -10,25 +9,10 @@ export default function Register() {
     const password = useRef();
     const passwordAgain = useRef();
     const navigate = useNavigate();
-    const handleClick = async (e) => {
-        e.preventDefault();
-        if (passwordAgain.current.value !== password.current.value) {
-            passwordAgain.current.setCustomValidity("Password don't match!")
-        } else {
-            try {
-                const user = {
-                    username: username.current.value,
-                    email: email.current.value,
-                    password: password.current.value
-                }
-                await axios.post("http://localhost:8800/api/auth/register", user);
-                toast.success("Successfully registered");
-                navigate("/login")
-            } catch (err) {
-                console.log(err)
-            }
-        }
-    }
+    const handleSubmit = async (e) => {
+        await handleClick(e, passwordAgain, password, username, email, navigate);
+    };
+
     return (
         <div className="login">
             <div className="loginWrapper">
@@ -39,7 +23,7 @@ export default function Register() {
                     </span>
                 </div>
                 <div className="loginRight">
-                    <form className="loginBox" onSubmit={handleClick}>
+                    <form className="loginBox" onSubmit={handleSubmit}>
                         <input placeholder="Username" required ref={username} className="loginInput" />
                         <input placeholder="Email" required ref={email} className="loginInput" type="email" />
                         <input placeholder="Password" required ref={password} className="loginInput" type="password" minLength="6" />

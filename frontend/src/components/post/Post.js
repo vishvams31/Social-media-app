@@ -1,13 +1,15 @@
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import React, { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import './post.css';
 import { format } from 'timeago.js';
 import { Link } from 'react-router-dom';
-import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
+import { fetchUser } from '../../services/Service'
+import { likeHandler } from '../../services/Service'
+import { handleUpdatePost } from '../../services/Service'
 
-export default function Post({ post ,handleDeletePost}) {
+
+export default function Post({ post, handleDeletePost }) {
     const [Like, setLike] = useState(post.likes.length);
     const [isLiked, setIsLiked] = useState(false);
     const [user, setUser] = useState({});
@@ -16,8 +18,8 @@ export default function Post({ post ,handleDeletePost}) {
     const currentUser = useSelector(state => state.auth.user)
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(post.desc);
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    // const [selectedImage, setSelectedImage] = useState(null);
+    // const [imagePreview, setImagePreview] = useState(null);
 
 
     useEffect(() => {
@@ -25,28 +27,8 @@ export default function Post({ post ,handleDeletePost}) {
     }, [currentUser._id, post.likes]);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await axios.get(`http://localhost:8800/api/users?userId=${post.userId}`);
-                setUser(res.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-                // Handle error, show message to user, etc.
-            }
-        };
-        fetchUser();
+        fetchUser(post, setUser);
     }, [post.userId]);
-
-    const likeHandler = () => {
-        try {
-            axios.put("http://localhost:8800/api/posts/" + post._id + "/like", { userId: currentUser._id });
-        } catch (err) {
-            console.error('Error liking post:', err);
-            // Handle error, show message to user, etc.
-        }
-        setLike(isLiked ? Like - 1 : Like + 1);
-        setIsLiked(!isLiked);
-    };
 
     const handleEditPost = () => {
         setIsEditing(true);
@@ -56,41 +38,6 @@ export default function Post({ post ,handleDeletePost}) {
             setShowDropdown(!showDropdown);
         }// Toggle dropdown visibility
     };
-
-    const handleUpdatePost = async () => {
-        try {
-            const updatedPost = {
-                desc: editedContent,
-                userId: currentUser._id // Include the userId for authentication
-            };
-
-            const response = await axios.put(`http://localhost:8800/api/posts/${post._id}`, updatedPost);
-
-            if (response.status === 200) {
-                // Post updated successfully
-                console.log("Post updated:", response.data);
-                window.location.reload()
-                toast.success("your post updated successfully")
-                // If you want to update the UI with the updated post, you can do so here
-                // For example, you could update the post state with the updated post
-            } else {
-                console.error("Failed to update post:", response.data);
-                // Handle error - show message to user, etc.
-            }
-        } catch (error) {
-            console.error("Error updating post:", error);
-            // Handle error - show message to user, etc.
-        }
-        // Implement logic to handle updating post
-        setShowDropdown(false); // Close the dropdown menu after clicking the option
-        setIsEditing(false);
-    };
-
-
-
-
-
-   
 
     return (
 
@@ -120,7 +67,7 @@ export default function Post({ post ,handleDeletePost}) {
                             <div>Image Description: </div>
                             <span>
                                 <textarea className='postText' value={editedContent} onChange={(e) => setEditedContent(e.target.value)}></textarea>
-                                <span><button className='updateButton' onClick={handleUpdatePost}>Update</button></span>
+                                <span><button className='updateButton' onClick={handleUpdatePost(editedContent, currentUser, post, setShowDropdown, setIsEditing)}>Update</button></span>
                             </span>
                         </>
                     ) : (
@@ -132,8 +79,8 @@ export default function Post({ post ,handleDeletePost}) {
                 </div>
                 <div className='postBottom'>
                     <div className='postBottomLeft'>
-                        <img className='likeIcon' src={`${PF}like.png`} onClick={likeHandler}></img>
-                        <img className='likeIcon' src={`${PF}heart.png`} onClick={likeHandler} alt=""></img>
+                        <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)}></img>
+                        <img className='likeIcon' src={`${PF}heart.png`} oonClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=""></img>
                         <span className='postLikeCounter'>{Like} people like it</span>
                     </div>
                 </div>

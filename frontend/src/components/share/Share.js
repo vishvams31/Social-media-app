@@ -3,10 +3,9 @@ import LabelIcon from '@mui/icons-material/Label';
 import RoomIcon from '@mui/icons-material/Room';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import { Cancel } from '@mui/icons-material';
+import { submitHandler } from '../../services/Service';
 import "./share.css";
-import { useContext, useRef, useState } from "react";
-import axios from "axios";
-import toast from 'react-hot-toast';
+import { useState } from "react";
 import { useSelector } from 'react-redux';
 
 import { useForm } from 'react-hook-form';
@@ -17,39 +16,13 @@ export default function Share() {
     // const desc = useRef();
     const [file, setFile] = useState(null);
     const { register, handleSubmit } = useForm();
-
-    const submitHandler = async (dat, event) => {
-        event.preventDefault();
-
-        console.log(dat)
-        const newPost = {
-            userId: user._id,
-            desc: dat.desc,
-        };
-        if (file) {
-            const data = new FormData();
-            const fileName = Date.now() + file.name;
-            data.append("name", fileName);
-            data.append("file", file);
-            newPost.img = fileName;
-            console.log(newPost);
-            try {
-                await axios.post("http://localhost:8800/api/upload", data);
-            } catch (err) { }
-        }
-        try {
-            await axios.post("http://localhost:8800/api/posts", newPost);
-            window.location.reload();
-            setTimeout(() => {
-                toast.success("Post uploaded")
-            }, 2000)
-        } catch (err) { }
+    const onSubmit = (data) => {
+        submitHandler(data, { preventDefault: () => { } }, user, file);
     };
-
     return (
         <div className="share">
             <div className="shareWrapper">
-                <form onSubmit={handleSubmit(submitHandler)}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="shareTop">
                         <img
                             className="shareProfileImg"

@@ -1,14 +1,11 @@
-import axios from 'axios';
-import React, { useContext, useState } from 'react';
+import React, { useState, useRef } from 'react';
 import './userInformation.css'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Field } from 'redux-form';
-import {useForm} from 'react-hook-form'
-const UserInformation = ({user}) => {
+import { useForm } from 'react-hook-form'
+import { updateData, handleFileChange } from '../../services/Service'
+const UserInformation = ({ user }) => {
   const currentUser = useSelector(state => state.auth.user);
-
-
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState({
     city: user.city,
@@ -34,22 +31,10 @@ const UserInformation = ({user}) => {
       window.location.reload()
     }
   };
-  const updateData = async (values) => {
-    const data = {
-      city: values.city,
-      from: values.from,
-      relationship: values.relationship,
-      userId: user._id,
-      username: values.username,
-    };
-    await axios.put(`http://localhost:8800/api/users/${user._id}`, data);
-  };
-
-
-  const toggleEditMode = async(data,e) => {
+  const toggleEditMode = async (data, e) => {
     e.preventDefault()
     if (isEditing && user._id == currentUser._id) {
-      await updateData(data);
+      await updateData(data, user);
     }
     setIsEditing(!isEditing);
   };
@@ -60,7 +45,16 @@ const UserInformation = ({user}) => {
   // user.followers.length
   const navigate = useNavigate()
 
-  const {register,handleSubmit} = useForm();
+  const { register, handleSubmit } = useForm();
+  const fileInputRef = useRef(null);
+  const handleProfilePictureClick = () => {
+    fileInputRef.current.click();
+  };
+  const handleFileChangeWrapper = (event) => {
+    handleFileChange(event, user);
+
+  };
+  const showUpdateButton = user.username === currentUser.username;
   return (
     <div className="rightbarInfo">
       <div className="rightbarInfoItem">
@@ -126,6 +120,17 @@ const UserInformation = ({user}) => {
           </button>
           <button className='logoutButton' onClick={handleLogout}
           >Logout</button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={handleFileChangeWrapper}
+            id="file"
+            accept=".png,.jpeg,.jpg"
+          />
+          {showUpdateButton && (
+            <button className="updateProfilePictureButton" onClick={handleProfilePictureClick}>Update Profile Picture</button>
+          )}
         </div>
       )}
     </div>
