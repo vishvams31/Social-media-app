@@ -1,24 +1,14 @@
-import "./topbar.css"
-import { useState, useCallback } from 'react'
-import { Search, Person, Chat, Notifications } from "@mui/icons-material"
-import { Link, useNavigate } from "react-router-dom"
+// Topbar.js
+import "./topbar.css";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { searchUser } from '../../services/Service'
+import { Person, Chat, Notifications } from "@mui/icons-material"
+import Searchbar from './Searchbar';
 
 export default function Topbar() {
     const user = useSelector(state => state.auth.user);
-    const [searchTerm, setSearchTerm] = useState('');
-    const navigate = useNavigate()
-    const handleSearch = useCallback(async () => {
-        const user = await searchUser(searchTerm);
-        if (user) {
-            navigate(`/profile/${user.username}`);
-        } else {
-            alert('User not found');
-        }
-    }, [searchTerm, navigate]);
-    // console.log(user)
-    const PF = process.env.REACT_APP_PUBLIC_FOLDER
+    const PF = process.env.REACT_APP_PUBLIC_FOLDER;
+
     return (
         <div className="topbarContainer">
             <div className="topbarContainer">
@@ -28,12 +18,7 @@ export default function Topbar() {
                     </Link>
                 </div>
                 <div className="topbarCenter">
-                    <div className="searchbar">
-                        <Search className="searchIconMUI" />
-                        <input type="text" placeholder="Search for friend, post or video" className="searchInput" value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)} />
-                        <button onClick={handleSearch} className="searchButton">Search</button>
-                    </div>
+                    <Searchbar />
                 </div>
                 <div className="topbarRight">
                     <div className="topbarLinks">
@@ -61,5 +46,5 @@ export default function Topbar() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

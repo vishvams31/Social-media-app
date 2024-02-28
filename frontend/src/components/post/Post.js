@@ -67,7 +67,7 @@ export default function Post({ post, handleDeletePost }) {
                             <div>Image Description: </div>
                             <span>
                                 <textarea className='postText' value={editedContent} onChange={(e) => setEditedContent(e.target.value)}></textarea>
-                                <span><button className='updateButton' onClick={handleUpdatePost(editedContent, currentUser, post, setShowDropdown, setIsEditing)}>Update</button></span>
+                                <span><button className='updateButton' onClick={() => handleUpdatePost(editedContent, currentUser, post, setShowDropdown, setIsEditing)}>Update</button></span>
                             </span>
                         </>
                     ) : (
@@ -79,8 +79,9 @@ export default function Post({ post, handleDeletePost }) {
                 </div>
                 <div className='postBottom'>
                     <div className='postBottomLeft'>
-                        <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=''></img>
-                        <img className='likeIcon' src={`${PF}heart.png`} onClick={() => likeHandler(post, setLike, setIsLiked, currentUser, Like, isLiked)} alt=""></img>
+                        <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, currentUser, setLike, setIsLiked, isLiked, Like)} alt=''></img>
+                        <img className='likeIcon' src={`${PF}heart.png`} onClick={() => likeHandler(post, currentUser, setLike, setIsLiked, isLiked, Like)} alt=""></img>
+
                         <span className='postLikeCounter'>{Like} people like it</span>
                     </div>
                 </div>
