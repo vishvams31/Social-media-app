@@ -80,8 +80,6 @@ export default function Post({ post, handleDeletePost }) {
                 <div className='postBottom'>
                     <div className='postBottomLeft'>
                         <img className='likeIcon' src={`${PF}like.png`} onClick={() => likeHandler(post, currentUser, setLike, setIsLiked, isLiked, Like)} alt=''></img>
-                        <img className='likeIcon' src={`${PF}heart.png`} onClick={() => likeHandler(post, currentUser, setLike, setIsLiked, isLiked, Like)} alt=""></img>
-
                         <span className='postLikeCounter'>{Like} people like it</span>
                     </div>
                 </div>

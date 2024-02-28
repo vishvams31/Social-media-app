@@ -19,7 +19,7 @@ const Searchbar = () => {
     return (
         <div className="searchbar">
             <Search className="searchIconMUI" />
-            <input type="text" placeholder="Search for friend, post or video" className="searchInput" value={searchTerm}
+            <input type="text" placeholder="Search for friend" className="searchInput" value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)} />
             <button onClick={handleSearch} className="searchButton">Search</button>
         </div>

@@ -9,6 +9,7 @@ import UserInformation from "./userInformation";
 import { useDispatch, useSelector } from "react-redux";
 import { getFriends } from '../../services/Service'
 import { followHandler } from '../../services/Service'
+import React from "react";
 
 export default function Rightbar({ user }) {
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
@@ -21,8 +22,6 @@ export default function Rightbar({ user }) {
     useEffect(() => {
         setFollowed(currentUser.followings.includes(user?._id));
     }, [currentUser, user?._id]);
-    // console.log(followed);
-    // const [isLoading, setIsLoading] = useState(false)
     useEffect(() => {
         getFriends(user, setFriends);
     }, [user]);
