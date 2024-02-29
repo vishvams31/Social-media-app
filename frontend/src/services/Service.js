@@ -57,7 +57,7 @@ export const fetchPosts = async (username, user, setPosts) => {
         ? await axios.get(BASE_URL + "posts/profile/" + username)
         : await axios.get(BASE_URL + "posts/timeline/" + user._id);
     setPosts(
-        res.data.sort((p1, p2) => {
+        res.data.posts.sort((p1, p2) => {
             return new Date(p2.createdAt) - new Date(p1.createdAt);
         })
     );

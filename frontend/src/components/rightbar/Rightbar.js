@@ -21,6 +21,7 @@ export default function Rightbar({ user }) {
     const [followed, setFollowed] = useState(false);
     useEffect(() => {
         setFollowed(currentUser.followings.includes(user?._id));
+        console.log(currentUser)
     }, [currentUser, user?._id]);
     useEffect(() => {
         getFriends(user, setFriends);
@@ -62,7 +63,7 @@ export default function Rightbar({ user }) {
                 <UserInformation user={user} />
                 <h4 className="rightbarFriendTitle">User friends</h4>
                 <div className="rightbarFollowings" key={friends._id}>
-                    {friends.map((friend) => (
+                    {friends.friends && friends.friends.map((friend) => (
                         <Link to={"/profile/" + friend.username} style={{ textDecoration: "none" }} key={friend._id}>
                             <div className="rightbarFollowing">
                                 <img
