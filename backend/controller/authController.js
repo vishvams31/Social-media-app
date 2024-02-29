@@ -45,9 +45,9 @@ const login = async (req, res) => {
             { userId: user._id },
             process.env.JWT_KEY
         );
-        return res.status(200).json(
-            user
-        )
+        const authUser = { user: user, token: token }
+        console.log(authUser);
+        return res.status(200).json(authUser)
     } catch (err) {
         res.status(500).json(err)
     }

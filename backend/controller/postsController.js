@@ -12,16 +12,11 @@ const createPost = async (req, res) => {
     }
 };
 //update a post
-const updatePost=async (req, res) => {
+const updatePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (post.userId == req.body.userId) {
-            await (post.updateOne({ $set: req.body }));
-            res.status(200).json("the post has been updated")
-        }
-        else {
-            res.status(403).json("you can update only your post")
-        }
+        await (post.updateOne({ $set: req.body }));
+        res.status(200).json("the post has been updated")
     } catch (err) {
         res.status(500).json(err)
     }
@@ -30,17 +25,12 @@ const updatePost=async (req, res) => {
 const deletePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (post.userId == req.body.userId) {
-            if (!post) {
-                res.status(404).json("post not found")
-            }
-            else {
-                await post.deleteOne();
-                res.status(200).json("the post has been deleted")
-            }
+        if (!post) {
+            res.status(404).json("post not found")
         }
         else {
-            exports.status(403).json("you can delete only your post")
+            await post.deleteOne();
+            res.status(200).json("the post has been deleted")
         }
     } catch (err) {
         res.status(500).json(err)
@@ -51,27 +41,32 @@ const deletePost = async (req, res) => {
 const likePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post.likes.includes(req.body.userId)) {
-            await post.updateOne({ $push: { likes: req.body.userId } });
-            res.status(200).json("The post has been liked")
-        } else {
-            await post.updateOne({ $pull: { likes: req.body.userId } });
-            res.status(200).json("the post has been disliked")
+        if (post) {
+            if (!post.likes.includes(req.body.userId)) {
+                await post.updateOne({ $push: { likes: req.body.userId } });
+                res.status(200).json("The post has been liked")
+            } else {
+                await post.updateOne({ $pull: { likes: req.body.userId } });
+                res.status(200).json("the post has been disliked")
+            }
+        }
+        else {
+            res.status(404).json("This post doesn't exist")
         }
     } catch (err) {
         res.status(500).json(err);
     }
 };
 //get a post
-const getPost = async (req, res) => {
-    try {
-        const post = await Post.findById(req.params.id)
-        res.status(200).json(post)
+// const getPost = async (req, res) => {
+//     try {
+//         const post = await Post.findById(req.params.id)
+//         res.status(200).json(post)
 
-    } catch (err) {
-        res.status(500).json(err)
-    }
-};
+//     } catch (err) {
+//         res.status(500).json(err)
+//     }
+// };
 //get timeline
 const timeline = async (req, res) => {
     try {
@@ -126,7 +121,6 @@ module.exports = {
     updatePost,
     deletePost,
     likePost,
-    getPost,
     timeline,
     userPosts
 } 

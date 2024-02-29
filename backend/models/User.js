@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema(
   {
+    posts: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+    }],
     username: {
       type: String,
       require: true,

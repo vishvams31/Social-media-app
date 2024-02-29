@@ -3,6 +3,12 @@ import toast from 'react-hot-toast';
 const BASE_URL = "http://localhost:8800/api/";
 
 
+const axiosInstance = axios.create({
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+});
+
 
 export const handleFileChange = async (event, user) => {
     const file = event.target.files[0];
@@ -39,7 +45,7 @@ export const handleDeletePost = async (post, setPosts, posts) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this post?");
     if (confirmDelete) {
         try {
-            await axios.delete(BASE_URL + `posts/${post._id}`, {
+            await axiosInstance.delete(BASE_URL + `posts/${post._id}`, {
                 data: { userId: post.userId }
             });
             setPosts(posts.filter((ele) => ele._id !== post._id))
@@ -88,7 +94,7 @@ export const handleUpdatePost = async (editedContent, currentUser, post, setShow
             userId: currentUser._id
         };
 
-        const response = await axios.put(BASE_URL + `posts/${post._id}`, updatedPost);
+        const response = await axiosInstance.put(BASE_URL + `posts/${post._id}`, updatedPost);
 
         if (response.status === 200) {
             console.log("Post updated:", response.data);
@@ -107,13 +113,13 @@ export const getFriends = async (user, setFriends) => {
         // setIsLoading(true); // Start loading
         if (user && user._id) {
             const URL = BASE_URL + `users/friends/${user._id}`;
-            const friendList = await axios.get(URL);
+            const friendList = await axiosInstance.get(URL);
             setFriends(friendList.data);
             // setIsLoading(false); // Stop loading
         }
 
     } catch (err) {
-        console.log("smit" + err);
+        console.log(err);
     }
 };
 export const followHandler = async (followed, user, currentUser, dispatch, setFollowed) => {
@@ -142,7 +148,7 @@ export const updateData = async (values, user) => {
         userId: user._id,
         username: values.username,
     };
-    await axios.put(BASE_URL + `users/${user._id}`, data);
+    await axiosInstance.put(BASE_URL + `users/${user._id}`, data);
     toast.success("Successfully Updated")
 };
 
@@ -162,11 +168,11 @@ export const submitHandler = async (dat, event, user, file) => {
         newPost.img = fileName;
         console.log(newPost);
         try {
-            await axios.post(BASE_URL + "upload", data);
+            await axiosInstance.post(BASE_URL + "upload", data);
         } catch (err) { }
     }
     try {
-        await axios.post(BASE_URL + "posts", newPost);
+        await axiosInstance.post(BASE_URL + "posts", newPost);
         window.location.reload();
         setTimeout(() => {
             toast.success("Post uploaded")

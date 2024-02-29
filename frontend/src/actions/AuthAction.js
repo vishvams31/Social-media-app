@@ -4,15 +4,18 @@ export const loginStart = () => ({
     type: 'LOGIN_START',
 });
 
-export const loginSuccess = (user, token) => (dispatch) => {
+export const loginSuccess = (authUser) => (dispatch) => {
+    // console.log(token)
+    console.log(authUser)
     dispatch({
         type: 'LOGIN_SUCCESS',
-        payload: { user, token }
+        payload: authUser
     });
     // Store user in localStorage
     // console.log(user)
-    console.log(user)
-    localStorage.setItem('user', JSON.stringify(user));
+    console.log(authUser.token)
+    localStorage.setItem('user', JSON.stringify(authUser.user));
+    localStorage.setItem('token', authUser.token);
 };
 
 export const loginFailure = (error) => ({
@@ -32,9 +35,14 @@ export const loginCall = (userCredentials) => async (dispatch) => {
     dispatch(loginStart());
     try {
         const res = await axios.post("http://localhost:8800/api/auth/login", userCredentials);
-        console.log(res)
-        dispatch(loginSuccess(res.data));
+        const authUser = {
+            user: res.data.user,
+            token: res.data.token
+        }
+        console.log(authUser)
+        dispatch(loginSuccess(authUser));
         toast.success("Login successfully")
+        window.location.reload()
     } catch (err) {
         dispatch(loginFailure(err.message));
     }

@@ -26,6 +26,7 @@ const UserInformation = ({ user }) => {
     if (confirmLogout) {
       // Clear user session
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
       // Redirect to login page
       navigate('/login');
       window.location.reload()
@@ -35,6 +36,7 @@ const UserInformation = ({ user }) => {
     e.preventDefault()
     if (isEditing && user._id === currentUser._id) {
       await updateData(data, user);
+      // window.location.reload()
     }
     setIsEditing(!isEditing);
   };

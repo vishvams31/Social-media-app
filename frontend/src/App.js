@@ -21,8 +21,13 @@ function App() {
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
-    if (user) {
-      dispatch(loginSuccess(user));
+    const token = localStorage.getItem('token')
+    const authUser = {
+      user: user, token: token
+    }
+    console.log(authUser)
+    if (user && token) {
+      dispatch(loginSuccess(authUser));
     }
   }, [dispatch]);
 

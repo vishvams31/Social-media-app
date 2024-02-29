@@ -3,7 +3,8 @@
 const initialState = {
     user: JSON.parse(localStorage.getItem("user")) || null,
     isFetching: false,
-    error: false
+    error: false,
+    token: localStorage.getItem("token") || null
 };
 
 const AuthReducer = (state = initialState, action) => {
