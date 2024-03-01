@@ -43,22 +43,6 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
         console.error(error);
     }
 });
-app.put("/api/posts/:id/image", upload.single("file"), async (req, res) => {
-    try {
-        // Logic to update the post's image in the database
-        const postId = req.params.id;
-        const imageName = req.body.name; // Assuming you pass the desired image name in the request body
-
-        // Example: Update the post's image in the database using postId and imageName
-
-        return res.status(200).json("Post image updated successfully");
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json("Error updating post image");
-    }
-});
-
-
 app.use("/api/users", userRoute)
 app.use("/api/auth", authRoute)
 app.use("/api/posts", postRoute)
