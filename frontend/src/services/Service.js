@@ -161,7 +161,7 @@ export const followHandler = async (followed, user, currentUser, dispatch, setFo
 export const updateData = async (values, user) => {
     const data = {
         city: values.city,
-        from: values.from,
+        state: values.state,
         relationship: values.relationship,
         userId: user._id,
         username: values.username,

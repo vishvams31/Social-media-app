@@ -9,7 +9,7 @@ const UserInformation = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formValues, setFormValues] = useState({
     city: user.city,
-    from: user.from,
+    state: user.state,
     relationship: user.relationship,
     username: user.username,
   });
@@ -84,15 +84,15 @@ const UserInformation = ({ user }) => {
         }
       </div>
       <div className="rightbarInfoItem">
-        <span className="rightbarInfoKey">From:</span>
+        <span className="rightbarInfoKey">State:</span>
         {isEditing ? <input
-          {...register("from")}
+          {...register("state")}
           type="text"
-          value={formValues.from}
+          value={formValues.state}
           onChange={handleInputChange}
           disabled={!isEditing}
           className='userInformationInput'
-        /> : <span className='userInformationInput'>{formValues.from}</span>
+        /> : <span className='userInformationInput'>{formValues.state}</span>
         }
       </div>
       <div className="rightbarInfoItem">

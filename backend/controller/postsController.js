@@ -1,4 +1,6 @@
 // const router = require("express").Router();
+const fs = require('fs');
+const path = require('path');
 const Post = require("../models/Post")
 const User = require("../models/User")
 //create a post
@@ -27,20 +29,45 @@ const updatePost = async (req, res) => {
     }
 };
 //delete a post
+
 const deletePost = async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
         if (!post) {
-            res.status(404).json("post not found")
+            return res.status(404).json("post not found");
         }
-        else {
+        const imageName = post.img;
+        const imagePath = path.join(__dirname, '../public/images', imageName);
+
+        // Check if the file exists
+        fs.access(imagePath, fs.constants.F_OK, async (err) => {
+            if (err) {
+                console.error('File does not exist');
+                return res.status(500).json({ message: 'File does not exist' });
+            }
+            // Wrap fs.unlink in a Promise to use await
+            const deleteFile = new Promise((resolve, reject) => {
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error('Error deleting file', err);
+                        reject(err);
+                    } else {
+                        resolve();
+                    }
+                });
+            });
+            //delete the picture from the server side
+            await deleteFile;
+            // Delete the post from the database
             await post.deleteOne();
-            res.status(200).json("the post has been deleted")
-        }
+            res.status(200).json("the post has been deleted");
+        });
     } catch (err) {
-        res.status(500).json(err)
+        console.error(err);
+        res.status(500).json(err);
     }
 };
+
 //like a post
 
 const likePost = async (req, res) => {
@@ -62,16 +89,6 @@ const likePost = async (req, res) => {
         res.status(500).json(err);
     }
 };
-//get a post
-// const getPost = async (req, res) => {
-//     try {
-//         const post = await Post.findById(req.params.id)
-//         res.status(200).json(post)
-
-//     } catch (err) {
-//         res.status(500).json(err)
-//     }
-// };
 //get timeline
 const timeline = async (req, res) => {
     try {
