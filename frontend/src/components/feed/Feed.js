@@ -8,11 +8,13 @@ import { fetchPosts } from '../../services/Service'
 
 
 export default function Feed({ username }) {
+    console.log(username)
     const [posts, setPosts] = useState([]);
     const user = useSelector(state => state.auth.user)
 
     useEffect(() => {
         fetchPosts(username, user, setPosts);
+        console.log(posts)
     }, [username, user._id]);
 
     return (

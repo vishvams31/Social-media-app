@@ -34,6 +34,7 @@ const login = async (req, res) => {
             res.status(404).json("user not found");
             return
         }
+        console.log(user)
 
         const validPassword = await bcrypt.compare(req.body.password, user.password)
         console.log(validPassword)
@@ -45,7 +46,7 @@ const login = async (req, res) => {
             { userId: user._id },
             process.env.JWT_KEY
         );
-        const authUser = { user: user, token: token }
+        const authUser = { token: token }
         console.log(authUser);
         return res.status(200).json(authUser)
     } catch (err) {

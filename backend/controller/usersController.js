@@ -1,8 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-const multer = require('multer')
-const path = require('path')
 const mongoose = require('mongoose');
+const jwt = require("jsonwebtoken")
 
 function isValidObjectId(id) {
     return mongoose.Types.ObjectId.isValid(id);
@@ -47,13 +46,44 @@ const updateUser = async (req, res) => {
 //     }
 // }
 //get a user
+const userFromToken = async (req, res) => {
+    try {
+        // Extract the token from the Authorization header
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_KEY);
+        if (decoded) {
+            const userId = decoded.userId;
+            console.log(userId)
+            // Fetch the user by userId
+            const user = await User.findById(userId);
+            console.log(user)
+            if (!user) {
+                res.status(404).json("user not found");
+                return
+            }
+            // Exclude sensitive fields
+            // Send the user object without the password and updatedAt fields
+            res.status(200).json(user);
+        }
+        else {
+            res.status.json("can't decode the token")
+        }
+    } catch (err) {
+        res.status(500).json(err);
+    }
+};
 const getUser = async (req, res) => {
     const userId = req.query.userId;
     const username = req.query.username;
     try {
         const user = userId ? await User.findById(userId) : await User.findOne({ username });
-        const { password, updatedAt, ...other } = user._doc;
-        res.status(200).json(other);
+        if (user) {
+            const { password, updatedAt, ...other } = user._doc;
+            res.status(200).json(other);
+        }
+        else {
+            res.status(404).json("user not found")
+        }
     } catch (err) {
         res.status(500).json(err);
     }
@@ -62,67 +92,90 @@ const getUser = async (req, res) => {
 const getFriends = async (req, res) => {
     try {
         const user = await User.findById(req.params.userId);
+        if (user) {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
 
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const skip = (page - 1) * limit;
+            const friends = await user.followings.slice(skip, skip + limit).map(async (friendId) => {
+                return await User.findById(friendId);
+            });
 
-        const friends = await user.followings.slice(skip, skip + limit).map(async (friendId) => {
-            return await User.findById(friendId);
-        });
+            const friendsList = await Promise.all(friends);
+            const friendListFiltered = friendsList.map((friend) => {
+                const { _id, username, profilePicture } = friend;
+                return { _id, username, profilePicture };
+            });
 
-        const friendsList = await Promise.all(friends);
-        const friendListFiltered = friendsList.map((friend) => {
-            const { _id, username, profilePicture } = friend;
-            return { _id, username, profilePicture };
-        });
-
-        const totalFriends = user.followings.length;
-        res.status(200).json({ friends: friendListFiltered, totalFriends });
+            const totalFriends = user.followings.length;
+            res.status(200).json({ friends: friendListFiltered, totalFriends });
+        }
+        else {
+            res.status(404).json("user not found")
+        }
     } catch (err) {
         res.status(500).json(err);
     }
 };
 //follow
 const follow = async (req, res) => {
-    if (req.body.userId !== req.params.id && isValidObjectId(req.body.userId) && isValidObjectId(req.params.userId)) {
+    if (req.body.userId !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
-            const currentUser = await User.findById(req.body.userId);
-            if (!user.followers.includes(req.body.userId)) {
-                await user.updateOne({ $push: { followers: req.body.userId } });
-                await currentUser.updateOne({ $push: { followings: req.params.id } });
-                res.status(200).json("User has been followed");
+            if (user) {
+                const currentUser = await User.findById(req.body.userId);
+                if (currentUser) {
+                    if (!user.followers.includes(req.body.userId)) {
+                        await user.updateOne({ $push: { followers: req.body.userId } });
+                        await currentUser.updateOne({ $push: { followings: req.params.id } });
+                        res.status(200).json("user has been followed");
+                    } else {
+                        res.status(403).json("you allready follow this user");
+                    }
+                }
+                else {
+                    res.status(404).json("currentUser not found")
+                }
             } else {
-                res.status(403).json("You already follow this user");
+                res.status(404).json("user not dound")
             }
         } catch (err) {
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You can't follow yourself");
+        res.status(403).json("you cant follow yourself");
     }
-}
+};
 //unfollow 
 const unfollow = async (req, res) => {
-    if (req.body.userId !== req.params.id && isValidObjectId(req.body.userId) && isValidObjectId(req.params.userId)) {
+    if (req.body.userId !== req.params.id) {
         try {
             const user = await User.findById(req.params.id);
-            const currentUser = await User.findById(req.body.userId);
-            if (user.followers.includes(req.body.userId)) {
-                await user.updateOne({ $pull: { followers: req.body.userId } });
-                await currentUser.updateOne({ $pull: { followings: req.params.id } });
-                res.status(200).json("User has been unfollowed");
-            } else {
-                res.status(403).json("You don't follow this user");
+            if (user) {
+                const currentUser = await User.findById(req.body.userId);
+                if (currentUser) {
+                    if (user.followers.includes(req.body.userId)) {
+                        await user.updateOne({ $pull: { followers: req.body.userId } });
+                        await currentUser.updateOne({ $pull: { followings: req.params.id } });
+                        res.status(200).json("user has been unfollowed");
+                    } else {
+                        res.status(403).json("you dont follow this user");
+                    }
+                }
+                else {
+                    res.status(404).json("currentUser not found")
+                }
+            }
+            else {
+                res.status(404).json("user not found")
             }
         } catch (err) {
             res.status(500).json(err);
         }
     } else {
-        res.status(403).json("You can't unfollow yourself");
+        res.status(403).json("you cant unfollow yourself");
     }
-}
+};
 //find a user
 const findUser = async (req, res) => {
 
@@ -136,6 +189,7 @@ const findUser = async (req, res) => {
 module.exports = {
     updateUser,
     // deleteUser,
+    userFromToken,
     getUser,
     getFriends,
     follow,

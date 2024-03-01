@@ -25,7 +25,7 @@ function App() {
     const authUser = {
       user: user, token: token
     }
-    console.log(authUser)
+    // console.log(authUser)
     if (user && token) {
       dispatch(loginSuccess(authUser));
     }

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import toast from 'react-hot-toast';
+const BASE_URL = "http://localhost:8800/api/";
 export const loginStart = () => ({
     type: 'LOGIN_START',
 });
@@ -13,7 +14,7 @@ export const loginSuccess = (authUser) => (dispatch) => {
     });
     // Store user in localStorage
     // console.log(user)
-    console.log(authUser.token)
+    // console.log(authUser.token)
     localStorage.setItem('user', JSON.stringify(authUser.user));
     localStorage.setItem('token', authUser.token);
 };
@@ -34,15 +35,25 @@ export const Unfollow = (userId) => ({
 export const loginCall = (userCredentials) => async (dispatch) => {
     dispatch(loginStart());
     try {
-        const res = await axios.post("http://localhost:8800/api/auth/login", userCredentials);
+        //got token from the login api 
+        //got user object by giving the token to the userTokenObject api
+        const res = await axios.post(BASE_URL + "auth/login", userCredentials);
+        const userDetailsRes = await axios.get(BASE_URL + `users/userObject`, {
+            headers: {
+                'Authorization': `Bearer ${res.data.token}`
+            }
+        });
+        console.log(userDetailsRes);
+        // const userDetails = userDetailsRes.data;
         const authUser = {
-            user: res.data.user,
-            token: res.data.token
+            token: res.data.token,
+            user: userDetailsRes.data
         }
-        console.log(authUser)
+        // console.log(authUser)
         dispatch(loginSuccess(authUser));
-        toast.success("Login successfully")
-        window.location.reload()
+        toast.success("Login successfully");
+
+        // window.location.reload();
     } catch (err) {
         dispatch(loginFailure(err.message));
     }

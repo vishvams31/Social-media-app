@@ -8,7 +8,10 @@ const axiosInstance = axios.create({
         Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
 });
+//get the user on login
+export const getUser = async (token) => {
 
+}
 
 export const handleFileChange = async (event, user) => {
     const file = event.target.files[0];
@@ -39,8 +42,7 @@ export const handleFileChange = async (event, user) => {
     }
 };
 
-
-
+//handels the delete post
 export const handleDeletePost = async (post, setPosts, posts) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this post?");
     if (confirmDelete) {
@@ -58,16 +60,21 @@ export const handleDeletePost = async (post, setPosts, posts) => {
     }
 
 };
+//fetch timeline and user profile posts
 export const fetchPosts = async (username, user, setPosts) => {
+
     const res = username
         ? await axios.get(BASE_URL + "posts/profile/" + username)
         : await axios.get(BASE_URL + "posts/timeline/" + user._id);
+    console.log(res)
     setPosts(
         res.data.posts.sort((p1, p2) => {
             return new Date(p2.createdAt) - new Date(p1.createdAt);
         })
     );
 };
+
+//get user profile
 export const fetchUser = async (post, setUser) => {
     try {
         const res = await axios.get(BASE_URL + `users?userId=${post.userId}`);
@@ -77,6 +84,8 @@ export const fetchUser = async (post, setUser) => {
         // Handle error, show message to user, etc.
     }
 };
+
+//handle likes
 export const likeHandler = (post, currentUser, setLike, setIsLiked, isLiked, Like) => {
     try {
         axios.put(BASE_URL + "posts/" + post._id + "/like", { userId: currentUser._id });
@@ -87,6 +96,8 @@ export const likeHandler = (post, currentUser, setLike, setIsLiked, isLiked, Lik
     setIsLiked(!isLiked);
 };
 
+
+//handle the edit button
 export const handleUpdatePost = async (editedContent, currentUser, post, setShowDropdown, setIsEditing) => {
     try {
         const updatedPost = {
@@ -98,7 +109,8 @@ export const handleUpdatePost = async (editedContent, currentUser, post, setShow
 
         if (response.status === 200) {
             console.log("Post updated:", response.data);
-            toast.success("your post updated successfully")
+            toast.success("Updated! Please refreash the feed to see the changes")
+            // window.location.reload()
         } else {
             console.error("Failed to update post:", response.data);
         }
@@ -108,12 +120,14 @@ export const handleUpdatePost = async (editedContent, currentUser, post, setShow
     setShowDropdown(false); // Close the dropdown menu after clicking the option
     setIsEditing(false);
 };
+
+//get user friends on user profile
 export const getFriends = async (user, setFriends) => {
     try {
         // setIsLoading(true); // Start loading
         if (user && user._id) {
             const URL = BASE_URL + `users/friends/${user._id}`;
-            const friendList = await axiosInstance.get(URL);
+            const friendList = await axios.get(URL);
             setFriends(friendList.data);
             // setIsLoading(false); // Stop loading
         }
@@ -122,6 +136,8 @@ export const getFriends = async (user, setFriends) => {
         console.log(err);
     }
 };
+
+//follow button handler 
 export const followHandler = async (followed, user, currentUser, dispatch, setFollowed) => {
     try {
         console.log(!followed)
@@ -140,6 +156,8 @@ export const followHandler = async (followed, user, currentUser, dispatch, setFo
     } catch (err) {
     }
 };
+
+//update user information on profile page
 export const updateData = async (values, user) => {
     const data = {
         city: values.city,
@@ -168,7 +186,7 @@ export const submitHandler = async (dat, event, user, file) => {
         newPost.img = fileName;
         console.log(newPost);
         try {
-            await axiosInstance.post(BASE_URL + "upload", data);
+            await axios.post(BASE_URL + "upload", data);
         } catch (err) { }
     }
     try {
@@ -179,6 +197,9 @@ export const submitHandler = async (dat, event, user, file) => {
         }, 2000)
     } catch (err) { }
 };
+
+
+//searchbar handler
 export const searchUser = async (username) => {
 
 
@@ -192,12 +213,17 @@ export const searchUser = async (username) => {
         console.log(err)
     }
 }
+
+//profile page handler
 export const fetchUserProfile = async (username, setUser) => {
     // setIsLoading(true)
+    // console.log(username)
     const res = await axios.get(BASE_URL + `users?username=${username}`);
     setUser(res.data);
     // setIsLoading(false)
 };
+
+//register handler
 export const handleClick = async (e, passwordAgain, password, username, email, navigate) => {
     // const navigate = useNavigate();
     e.preventDefault();

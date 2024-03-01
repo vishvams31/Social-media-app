@@ -14,6 +14,7 @@ export default function Profile() {
     // const [isLoading, setIsLoading] = useState(false)
     const [user, setUser] = useState({});
     const username = useParams().username;
+    console.log(username)
     // const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
