@@ -1,7 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 const BASE_URL = "http://localhost:8800/api/";
-
+//added token in header
 const axiosInstance = axios.create({
   headers: {
     authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 });
 //get the user on login
 export const getUser = async (token) => {};
-
+//update profile picture handler
 export const handleFileChange = async (event, user) => {
   const file = event.target.files[0];
   if (!file) {
@@ -193,7 +193,7 @@ export const updateData = async (values, user) => {
   await axiosInstance.put(BASE_URL + `users/${user._id}`, data);
   toast.success("Successfully Updated");
 };
-
+//create post handler
 export const submitHandler = async (dat, event, user, file) => {
   event.preventDefault();
 
@@ -236,11 +236,8 @@ export const searchUser = async (username) => {
 
 //profile page handler
 export const fetchUserProfile = async (username, setUser) => {
-  // setIsLoading(true)
-  // console.log(username)
   const res = await axios.get(BASE_URL + `users?username=${username}`);
   setUser(res.data);
-  // setIsLoading(false)
 };
 
 //register handler
